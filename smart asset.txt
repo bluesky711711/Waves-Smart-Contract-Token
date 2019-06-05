@@ -1,0 +1,14 @@
+let expiration = 999964400000  # March 8 2019, 8pm Moscow time
+let price = 1000000000          # 10 WAVES
+
+match tx {
+    case a: ExchangeTransaction =>
+        let pair = a.buyOrder.assetPair
+        let tradedForWaves = ! isDefined(pair.amountAsset) ||
+                             ! isDefined(pair.priceAsset)
+        tradedForWaves && a.price == price
+    case c: BurnTransaction =>
+        c.timestamp > expiration
+    case _: TransferTransaction | MassTransferTransaction => true
+    case _  => false
+}
